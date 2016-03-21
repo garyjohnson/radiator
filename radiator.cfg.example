@@ -1,10 +1,4 @@
 [general]
-rotation = 0
-mqtt = true
-
-[mqtt]
-host = 
-port = 
-username = 
-password = 
-online_topic = 
+rotation=0
+delay=10
+urls=http://www.google.com,http://www.bing.com,http://www.yahoo.com,http://www.duckduckgo.com
