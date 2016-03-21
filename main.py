@@ -5,7 +5,7 @@ import sys
 import signal
 import logging
 
-from PyQt5.Qt import QApplication, qmlRegisterType
+import PyQt5.Qt as qt
 
 import radiator.screens.radiator_screen as radiator_screen
 import radiator.main_window as main_window
@@ -18,9 +18,9 @@ def exit_on_ctrl_c():
 def main():
     exit_on_ctrl_c()
 
-    app = QApplication(sys.argv)
+    app = qt.QApplication(sys.argv)
 
-    qmlRegisterType(radiator_screen.RadiatorScreen, 'Screens', 1, 0, 'RadiatorScreen')
+    qt.qmlRegisterType(radiator_screen.RadiatorScreen, 'Screens', 1, 0, 'RadiatorScreen')
 
     window = main_window.MainWindow()
     window.showFullScreen()

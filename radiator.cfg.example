@@ -1,2 +1,10 @@
 [general]
 rotation = 0
+mqtt = true
+
+[mqtt]
+host = 
+port = 
+username = 
+password = 
+online_topic = 
