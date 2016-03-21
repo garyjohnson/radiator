@@ -11,7 +11,7 @@ RadiatorScreen {
 
     WebView {
         anchors.fill: parent
-        url: 'http://www.google.com'
+        url: root.url
     }
 
 }
