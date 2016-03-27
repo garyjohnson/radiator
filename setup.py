@@ -13,6 +13,6 @@ setup(
     author='Gary Johnson',
     author_email = 'gary@gjtt.com',
     description = 'Cycle webpages for running an information radiator',
-    license = 'GNU GPLv3',
+    license = 'GNU General Public License v3 (GPLv3)',
     packages = ['radiator'],
     )
