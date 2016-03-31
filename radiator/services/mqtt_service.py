@@ -9,6 +9,7 @@ import paho.mqtt.client as mqtt
 from pydispatch import dispatcher
 
 
+MARQUEE_SIGNAL = "SHOW_MARQUEE"
 logger = logging.getLogger(__name__)
 
 
@@ -40,6 +41,10 @@ class MqttService(object):
     def _online_topic(self):
         return self._settings['online_topic']
 
+    @property
+    def _marquee_topic(self):
+        return self._settings['marquee_topic']
+
     def _on_disconnect(self, client, userdata, return_code):
         logger.info('disconnected from mqtt broker: {}'.format(mqtt.error_string(return_code)))
 
@@ -50,8 +55,21 @@ class MqttService(object):
             logger.info('publishing to "{}"'.format(self._online_topic))
             self._client.publish(self._online_topic, '1', retain=True)
 
+        if self._marquee_topic:
+            logger.info('subscribing to "{}"'.format(self._marquee_topic))
+            self._client.subscribe(self._marquee_topic)
+
     def _on_message(self, client, userdata, message):
         payload_string = message.payload.decode('utf-8')
+
+        if message.topic == self._marquee_topic:
+            self._handle_marquee_message(payload_string)
+
+    def _handle_marquee_message(self, message):
+        marquee = json.loads(message)
+        duration = int(marquee['duration'])
+        image_url = marquee['image_url']
+        dispatcher.send(signal=MARQUEE_SIGNAL, sender=self, duration=duration, image_url=image_url)
 
     def _get_mqtt_settings(self):
         logger.info('loading mqtt settings')
@@ -69,6 +87,7 @@ class MqttService(object):
             settings['username'] = mqtt.get('username', '')
             settings['password'] = mqtt.get('password', '')
             settings['online_topic'] = mqtt.get('online_topic', '')
+            settings['marquee_topic'] = mqtt.get('marquee_topic', '')
 
         return settings
 
@@ -79,4 +98,5 @@ class MqttService(object):
                 'port': 0,
                 'username': '',
                 'password': '',
-                'online_topic': '' }
+                'online_topic': '', 
+                'marquee_topic': '' }

@@ -23,7 +23,7 @@ class RadiatorScreen(qt.QQuickItem):
 
     def componentComplete(self):
         super(RadiatorScreen, self).componentComplete()
-        qt.QTimer.singleShot(self._delay * 1000, self._cycle_url)
+        self._cycle_url()
 
     @qt.pyqtSlot()
     def _cycle_url(self):

@@ -7,6 +7,7 @@ import logging
 
 import PyQt5.Qt as qt
 
+import radiator.widgets.marquee as marquee
 import radiator.screens.radiator_screen as radiator_screen
 import radiator.main_window as main_window
 import radiator.services.mqtt_service as mqtt_service
@@ -21,6 +22,7 @@ def main():
 
     app = qt.QApplication(sys.argv)
 
+    qt.qmlRegisterType(marquee.Marquee, 'Widgets', 1, 0, 'Marquee')
     qt.qmlRegisterType(radiator_screen.RadiatorScreen, 'Screens', 1, 0, 'RadiatorScreen')
 
     window = main_window.MainWindow()
