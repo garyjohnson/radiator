@@ -30,10 +30,11 @@ class MqttService(object):
         self._client = mqtt.Client()
         self._client.on_connect = self._on_connect
         self._client.on_disconnect = self._on_disconnect
-        self._client.on_message = self._on_message
         self._client.username_pw_set(self._settings['username'], self._settings['password'])
         if self._online_topic:
             self._client.will_set(self._online_topic, '0', retain=True)
+        if self._marquee_topic:
+            self._client.message_callback_add(self._marquee_topic, self._on_marquee)
         self._client.connect_async(self._settings['host'], self._settings['port'])
         self._client.loop_start()
 
@@ -52,20 +53,14 @@ class MqttService(object):
     def _on_connect(self, client, userdata, flags, return_code):
         logger.info('connected to mqtt broker: {}'.format(mqtt.connack_string(return_code)))
 
-        if self._online_topic:
-            logger.info('publishing to "{}"'.format(self._online_topic))
-            self._client.publish(self._online_topic, '1', retain=True)
-
         if self._marquee_topic:
             logger.info('subscribing to "{}"'.format(self._marquee_topic))
             self._client.subscribe(self._marquee_topic)
 
-    def _on_message(self, client, userdata, message):
+    def _on_marquee(self, client, userdata, message):
         try:
             payload_string = message.payload.decode('utf-8')
-
-            if message.topic == self._marquee_topic:
-                self._handle_marquee_message(payload_string)
+            self._handle_marquee_message(payload_string)
         except Exception as ex:
             logger.error('error trying to parse message {}: {}'.format(message, ex))
 
