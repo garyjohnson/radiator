@@ -53,6 +53,10 @@ class MqttService(object):
     def _on_connect(self, client, userdata, flags, return_code):
         logger.info('connected to mqtt broker: {}'.format(mqtt.connack_string(return_code)))
 
+        if self._online_topic:
+            logger.info('publishing to "{}"'.format(self._online_topic))
+            self._client.publish(self._online_topic, '1', retain=True)
+
         if self._marquee_topic:
             logger.info('subscribing to "{}"'.format(self._marquee_topic))
             self._client.subscribe(self._marquee_topic)
