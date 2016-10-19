@@ -4,6 +4,8 @@ except:
     import configparser as config
 
 import PyQt5.Qt as qt
+import radiator.services as services
+import radiator.service.url_service as url_service
 
 
 DEFAULT_DELAY = 10
@@ -15,9 +17,8 @@ class RadiatorScreen(qt.QQuickItem):
 
     def __init__(self, *args, **kwargs):
         super(RadiatorScreen, self).__init__(*args, **kwargs)
+        self._url_service = services.get(url_service.UrlService)
         self._url = qt.QUrl('about:blank')
-        self._url_index = 0
-        self._urls = []
         self._delay = DEFAULT_DELAY
         self._load_settings()
 
@@ -27,14 +28,10 @@ class RadiatorScreen(qt.QQuickItem):
 
     @qt.pyqtSlot()
     def _cycle_url(self):
-        self._url_index += 1
-        if self._url_index >= len(self._urls):
-            self._url_index = 0
-
-        self.url = self._urls[self._url_index]
+        self._url_service.cycle_url()
+        self.url = self._url_service.current_url()
 
         qt.QTimer.singleShot(self._delay * 1000, self._cycle_url)
-
 
     @qt.pyqtProperty(qt.QUrl, notify=url_changed)
     def url(self):
@@ -55,11 +52,8 @@ class RadiatorScreen(qt.QQuickItem):
             config_parser.readfp(config_file)
 
         delay = DEFAULT_DELAY
-        urls_setting = ''
         if 'general' in config_parser.sections():
             general = config_parser['general']
-            urls_setting = general.get('urls', '')
             delay = general.getint('delay', DEFAULT_DELAY)
 
-        self._urls = list(map(lambda x: x.strip(), urls_setting.split(',')))
         self._delay = delay

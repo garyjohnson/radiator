@@ -10,7 +10,8 @@ import PyQt5.Qt as qt
 import radiator.widgets.marquee as marquee
 import radiator.screens.radiator_screen as radiator_screen
 import radiator.main_window as main_window
-import radiator.services.mqtt_service as mqtt_service
+import radiator.services as services
+import radiator.service.mqtt_service as mqtt_service
 
 
 def exit_on_ctrl_c():
@@ -28,7 +29,7 @@ def main():
     window = main_window.MainWindow()
     window.showFullScreen()
 
-    mqtt = mqtt_service.MqttService()
+    mqtt = services.get(mqtt_service.MqttService)
     mqtt.start()
 
     sys.exit(app.exec_())

@@ -18,6 +18,7 @@ class MqttService(object):
     def __init__(self):
         self._client = None
         self._settings = self._get_mqtt_settings()
+        self._url_service = services.get(url_service.UrlService)
 
         logger.info('mqtt settings loaded: {}'.format(self._settings))
 
